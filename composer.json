@@ -1,0 +1,23 @@
+{
+    "name": "sherlockode/sylius-norbr-plugin",
+    "type": "sylius-plugin",
+    "description": "Norbr plugin for Sylius.",
+    "keywords": [
+        "sylius",
+        "sylius-plugin"
+    ],
+    "license": "MIT",
+    "require": {
+        "guzzlehttp/guzzle": "^6.0 || ^7.0",
+        "php": "^7.3",
+        "sylius/sylius": "~1.10.0"
+    },
+    "config": {
+        "sort-packages": true
+    },
+    "autoload": {
+        "psr-4": {
+            "Sherlockode\\SyliusNorbrPlugin\\": "src/"
+        }
+    }
+}

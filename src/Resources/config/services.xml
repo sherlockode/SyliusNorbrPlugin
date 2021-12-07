@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+
+<container xmlns="http://symfony.com/schema/dic/services" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://symfony.com/schema/dic/services http://symfony.com/schema/dic/services/services-1.0.xsd">
+    <services>
+        <service
+                id="sylius.plugin.norbr.gateway_factory_builder"
+                class="Payum\Core\Bridge\Symfony\Builder\GatewayFactoryBuilder"
+        >
+            <argument>Sherlockode\SyliusNorbrPlugin\Payum\NorbrPaymentGatewayFactory</argument>
+            <tag name="payum.gateway_factory_builder" factory="sylius.norbr" />
+        </service>
+
+        <service id="Sherlockode\SyliusNorbrPlugin\Form\Type\NorbrConfigurationType">
+            <tag name="sylius.gateway_configuration_type" type="sylius.norbr" label="sylius.norbr.label" />
+            <tag name="form.type" />
+        </service>
+
+        <service id="Sherlockode\SyliusNorbrPlugin\Norbr\ClientFactory">
+            <argument type="service" id="router.default" />
+            <argument type="service" id="request_stack" />
+        </service>
+
+        <service id="Sherlockode\SyliusNorbrPlugin\Payum\Action\CaptureAction" public="true">
+            <tag name="payum.action" factory="sylius.norbr" alias="payum.action.capture" />
+        </service>
+
+        <service id="Sherlockode\SyliusNorbrPlugin\Payum\Action\ObtainTokenAction" public="true">
+            <tag name="payum.action" factory="sylius.norbr" alias="payum.action.obtain_token" />
+        </service>
+
+        <service id="Sherlockode\SyliusNorbrPlugin\Payum\Action\CreateChargeAction" public="true">
+            <argument type="service" id="Sherlockode\SyliusNorbrPlugin\Norbr\ClientFactory" />
+            <tag name="payum.action" factory="sylius.norbr" alias="payum.action.create_charge" />
+        </service>
+
+        <service id="Sherlockode\SyliusNorbrPlugin\Payum\Action\StatusAction" public="true">
+            <tag name="payum.action" factory="sylius.norbr" alias="payum.action.status" />
+        </service>
+    </services>
+</container>
