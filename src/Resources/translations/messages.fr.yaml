@@ -1,0 +1,13 @@
+sylius:
+    norbr:
+        label: Norbr
+        merchant_id: Identifiant marchand
+        api_key: Clé d'API
+        enable_for_production: Activer le mode "production"
+        card_number: Numéro de carte
+        expiration_date: Date d'expiration
+        cvv: Cryptogramme
+        card_holder: Nom du propriétaire de la carte
+        firstname_lastname: Prénom Nom
+        pay: Payer
+        processing: En cours de traitement...
