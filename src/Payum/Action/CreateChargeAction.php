@@ -61,7 +61,8 @@ class CreateChargeAction implements ActionInterface, GatewayAwareInterface, ApiA
         }
 
         $charge = $this->clientFactory->getClient($this->api)->createCharge($payment);
-        $details['result'] = $charge['result'];
+        $details['result'] = $charge['result'] ?? [];
+        $details['norbr_order_id'] = $charge['order_id'] ?? null;
         $payment->setDetails($details);
     }
 

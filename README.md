@@ -30,4 +30,17 @@ To complete the installation, don't forget to publish assets:
 $ php bin/console assets:install
 ```
 
+## Configuration
+
+Update your sylius installation by importing bundle configuration:
+
+```yaml
+# config/packages/_sylius.yaml
+
+imports:
+    # ...
+
+    - { resource: "@SherlockodeSyliusNorbrPlugin/Resources/config/config.yaml" }
+```
+
 That's it ! Now you can enable the Norbr payment method in your admin panel.
