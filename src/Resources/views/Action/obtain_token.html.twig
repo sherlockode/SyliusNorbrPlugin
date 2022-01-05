@@ -10,7 +10,7 @@
         <div class="row">
             <div class="col-10">
                 <div class="form-group">
-                    <label for="norbr-payment-card" class="control-label mb-1">Card number</label>
+                    <label for="norbr-payment-card" class="control-label mb-1">{{ 'sylius.norbr.card_number'|trans }}</label>
                     <div class="form-group" id="norbr-payment-card" data-class="red form-control cc-number identified visa" data-placeholder="4111 xxxx xxxx xxxx"></div>
                 </div>
             </div>
@@ -21,26 +21,26 @@
         <div class="row">
             <div class="col-6">
                 <div class="form-group">
-                    <label for="norbr-payment-expiry" class="control-label mb-1">Expiration</label>
+                    <label for="norbr-payment-expiry" class="control-label mb-1">{{ 'sylius.norbr.expiration_date'|trans }}</label>
                     <div class="form-group" id="norbr-payment-expiry" data-class="form-control cc-exp" data-placeholder="MM/YY"></div>
                 </div>
             </div>
             <div class="col-6">
-                <label for="norbr-payment-cvv" class="control-label mb-1">CVV</label>
+                <label for="norbr-payment-cvv" class="control-label mb-1">{{ 'sylius.norbr.cvv'|trans }}</label>
                 <div class="input-group">
                     <div class="form-group" id="norbr-payment-cvv" data-class="form-control cc-cc-cvc" data-placeholder="123"></div>
                 </div>
             </div>
         </div>
         <div class="form-group">
-            <label for="norbr-payment-holder" class="control-label mb-1">Card Holder</label>
-            <div class="form-group" id="norbr-payment-holder" data-class="form-control cc-number identified visa" data-placeholder="Prénom Nom"></div>
+            <label for="norbr-payment-holder" class="control-label mb-1">{{ 'sylius.norbr.card_holder'|trans }}</label>
+            <div class="form-group" id="norbr-payment-holder" data-class="form-control cc-number identified visa" data-placeholder="{{ 'sylius.norbr.firstname_lastname'|trans }}"></div>
         </div>
         <div>
             <button id="payment-button" type="submit" class="btn btn-lg btn-info btn-block">
                 <i class="fa fa-lock fa-lg"></i>&nbsp;
-                <span id="payment-button-amount">Pay </span>
-                <span id="payment-button-sending" style="display:none;">Sending…</span>
+                <span id="payment-button-amount">{{ 'sylius.norbr.pay'|trans }}</span>
+                <span id="payment-button-sending" style="display:none;">{{ 'sylius.norbr.processing'|trans }}</span>
             </button>
         </div>
     </form>

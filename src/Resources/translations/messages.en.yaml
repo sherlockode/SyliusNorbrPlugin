@@ -1,0 +1,13 @@
+sylius:
+    norbr:
+        label: Norbr
+        merchant_id: Merchant ID
+        api_key: API key
+        enable_for_production: Enable "production" mode
+        card_number: Card Number
+        expiration_date: Expiration date
+        cvv: CVV
+        card_holder: Card holder name
+        firstname_lastname: Firstname Lastname
+        pay: Pay
+        processing: Processing...
