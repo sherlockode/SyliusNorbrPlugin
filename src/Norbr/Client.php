@@ -6,6 +6,7 @@ use GuzzleHttp\Client as GuzzleClient;
 use GuzzleHttp\Exception\GuzzleException;
 use Sherlockode\SyliusNorbrPlugin\Payum\NorbrApi;
 use Sylius\Component\Core\Model\PaymentInterface;
+use Sylius\Component\Resource\Exception\UpdateHandlingException;
 use Symfony\Component\HttpFoundation\RequestStack;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 
@@ -103,6 +104,40 @@ class Client
             );
         } catch (GuzzleException $exception) {
             $response = $exception->getResponse();
+        }
+
+        return json_decode($response->getBody()->getContents(), true);
+    }
+
+    /**
+     * @param PaymentInterface $model
+     *
+     * @return array
+     *
+     * @throws UpdateHandlingException
+     */
+    public function refund(PaymentInterface $model): array
+    {
+        $details = $model->getDetails();
+        $amount = floor(abs($model->getAmount() / 100));
+
+        try {
+            $response = $this->getClient()->request(
+                'POST',
+                sprintf('/payment/maintenance/refund/%s', $details['norbr_order_id']),
+                [
+                    'json' => [
+                        'amount' => $amount,
+                        'refund_reason' => 'requested_by_customer',
+                    ],
+                    'headers' => [
+                        'x-api-key' => $this->api->getApiKey(),
+                        'version' => '1.0.0',
+                    ],
+                ],
+            );
+        } catch (GuzzleException $exception) {
+            throw new UpdateHandlingException('Could not refund Norbr order');
         }
 
         return json_decode($response->getBody()->getContents(), true);

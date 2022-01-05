@@ -36,5 +36,9 @@
         <service id="Sherlockode\SyliusNorbrPlugin\Payum\Action\StatusAction" public="true">
             <tag name="payum.action" factory="sylius.norbr" alias="payum.action.status" />
         </service>
+
+        <service id="Sherlockode\SyliusNorbrPlugin\Processor\RefundProcessor" public="true">
+            <argument type="service" id="Sherlockode\SyliusNorbrPlugin\Norbr\ClientFactory" />
+        </service>
     </services>
 </container>

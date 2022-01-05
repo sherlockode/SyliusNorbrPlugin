@@ -1,0 +1,8 @@
+winzou_state_machine:
+    sylius_payment:
+        callbacks:
+            before:
+                refund_norbr_order:
+                    on: ['refund']
+                    do: ['@Sherlockode\SyliusNorbrPlugin\Processor\RefundProcessor', 'refund']
+                    args: ['object']
