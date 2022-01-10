@@ -25,13 +25,7 @@ class StatusAction implements ActionInterface
         $payment = $request->getFirstModel();
         $details = $payment->getDetails();
 
-        if (!isset($details['result']) || !isset($details['result']['code'])) {
-            $request->markFailed();
-
-            return;
-        }
-
-        if (!in_array($details['result']['code'], ApiCode::getSuccessCodes())) {
+        if (!isset($details['state']) || ApiCode::TRANSACTION_SUCCESSFUL !== $details['state']) {
             $request->markFailed();
 
             return;

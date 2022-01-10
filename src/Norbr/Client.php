@@ -54,12 +54,12 @@ class Client
 
     /**
      * @param PaymentInterface $model
+     * @param string           $successUrl
+     * @param string           $declineUrl
      *
      * @return array
-     *
-     * @throws GuzzleException
      */
-    public function createCharge(PaymentInterface $model): array
+    public function createCharge(PaymentInterface $model, string $successUrl, string $declineUrl): array
     {
         $details = $model->getDetails();
         $order = $model->getOrder();
@@ -95,6 +95,11 @@ class Client
                         'customer_zip_code' => $address->getPostcode(),
                         'customer_country' => $address->getCountryCode(),
                         'customer_ip' => $this->requestStack->getMainRequest()->getClientIp(),
+                        'authentication_indicator' => 'ask_3ds',
+                        'accept_url' => $successUrl,
+                        'decline_url' => $declineUrl,
+                        'pending_url' => $successUrl,
+                        'exception_url' => $declineUrl,
                     ],
                     'headers' => [
                         'x-api-key' => $this->api->getApiKey(),

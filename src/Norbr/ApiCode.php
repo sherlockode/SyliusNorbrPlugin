@@ -7,6 +7,9 @@ namespace Sherlockode\SyliusNorbrPlugin\Norbr;
  */
 abstract class ApiCode
 {
+    public const TRANSACTION_SUCCESSFUL = 'transaction_successful';
+    public const TRANSACTION_FAILED = 'transaction_failed';
+
     /**
      * @param int $code
      *
