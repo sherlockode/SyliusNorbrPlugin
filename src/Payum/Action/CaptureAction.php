@@ -7,6 +7,7 @@ use Payum\Core\Exception\RequestNotSupportedException;
 use Payum\Core\GatewayAwareInterface;
 use Payum\Core\GatewayAwareTrait;
 use Payum\Core\Request\Generic;
+use Sherlockode\SyliusNorbrPlugin\Norbr\ApiCode;
 use Sherlockode\SyliusNorbrPlugin\Payum\Request\CreateCharge;
 use Sherlockode\SyliusNorbrPlugin\Payum\Request\ObtainToken;
 use Sylius\Component\Core\Model\PaymentInterface;
@@ -30,7 +31,7 @@ class CaptureAction implements ActionInterface, GatewayAwareInterface
         $payment = $request->getModel();
         $details = $payment->getDetails();
 
-        if (isset($details['result'])) {
+        if (isset($details['state'])) {
             return;
         }
 

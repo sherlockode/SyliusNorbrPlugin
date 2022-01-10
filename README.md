@@ -43,4 +43,13 @@ imports:
     - { resource: "@SherlockodeSyliusNorbrPlugin/Resources/config/config.yaml" }
 ```
 
+Then import routes:
+
+```yaml
+# config/routes.yaml
+
+sherlockode_sylius_norbr_plugin:
+    resource: "@SherlockodeSyliusNorbrPlugin/Resources/config/routing.xml"
+```
+
 That's it ! Now you can enable the Norbr payment method in your admin panel.
