@@ -57,7 +57,9 @@ class ObtainTokenAction implements ActionInterface, GatewayAwareInterface, ApiAw
 
         $renderTemplate = new RenderTemplate('@SherlockodeSyliusNorbrPlugin/Action/obtain_token.html.twig', [
             'publishable_key' => $this->api->getApiKey(),
+            'is_production' => $this->api->isProduction(),
             'actionUrl' => $request->getToken() ? $request->getToken()->getTargetUrl() : null,
+            'order' => $payment->getOrder(),
         ]);
         $this->gateway->execute($renderTemplate);
 
