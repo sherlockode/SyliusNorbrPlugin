@@ -65,7 +65,7 @@ class Client
         $order = $model->getOrder();
         $customer = $order->getCustomer();
         $address = $order->getBillingAddress();
-        $amount = floor(abs($model->getAmount() / 100));
+        $amount = $model->getAmount() / 100;
 
         try {
             $response = $this->getClient()->request(
@@ -124,7 +124,7 @@ class Client
     public function refund(PaymentInterface $model): array
     {
         $details = $model->getDetails();
-        $amount = floor(abs($model->getAmount() / 100));
+        $amount = $model->getAmount() / 100;
 
         try {
             $response = $this->getClient()->request(
