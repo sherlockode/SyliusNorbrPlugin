@@ -79,7 +79,7 @@ class Client
                         'payment_method_name' => $details['card']['scheme'],
                         'amount' => $amount,
                         'currency' => $model->getCurrencyCode(),
-                        'order_merchant_id' => $order->getId(),
+                        'order_merchant_id' => $order->getNumber(),
                         'payment_channel' => 'e-commerce',
                         'website_url' => $this->urlGenerator->generate(
                             'sylius_shop_homepage',
