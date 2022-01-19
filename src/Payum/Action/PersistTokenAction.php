@@ -40,8 +40,11 @@ class PersistTokenAction implements ActionInterface
      * @param CustomerContextInterface $customerContext
      * @param string                   $tokenModel
      */
-    public function __construct(EntityManagerInterface $em, CustomerContextInterface $customerContext, string $tokenModel)
-    {
+    public function __construct(
+        EntityManagerInterface $em,
+        CustomerContextInterface $customerContext,
+        string $tokenModel
+    ) {
         $this->em = $em;
         $this->customerContext = $customerContext;
         $this->tokenModel = $tokenModel;
@@ -70,6 +73,10 @@ class PersistTokenAction implements ActionInterface
             throw new LogicException('The card scheme is empty.');
         }
 
+        if (empty($details['card']['last4'])) {
+            throw new LogicException('The card last 4 numbers are empty.');
+        }
+
         /** @var CustomerInterface $customer */
         $customer = $this->customerContext->getCustomer();
 
@@ -79,6 +86,7 @@ class PersistTokenAction implements ActionInterface
             $token->setCustomer($customer);
             $token->setToken($details['card']['token']);
             $token->setScheme($details['card']['scheme']);
+            $token->setLast4($details['card']['last4']);
             $this->em->persist($token);
         }
     }

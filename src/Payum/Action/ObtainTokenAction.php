@@ -13,6 +13,7 @@ use Payum\Core\Reply\HttpResponse;
 use Payum\Core\Request\Generic;
 use Payum\Core\Request\GetHttpRequest;
 use Payum\Core\Request\RenderTemplate;
+use Sherlockode\SyliusNorbrPlugin\Model\TokenInterface;
 use Sherlockode\SyliusNorbrPlugin\Payum\Request\ObtainToken;
 use Sylius\Component\Core\Model\PaymentInterface;
 use Sylius\Component\Customer\Context\CustomerContextInterface;
@@ -82,10 +83,18 @@ class ObtainTokenAction implements ActionInterface, GatewayAwareInterface, ApiAw
         if ($getHttpRequest->method == 'POST') {
             $requestData = $getHttpRequest->request;
 
-            if (isset($requestData['norbr-token']) && isset($requestData['norbr-customer_scheme_name'])) {
+            if (
+                isset($requestData['norbr-token']) &&
+                isset($requestData['norbr-customer_scheme_name']) &&
+                isset($requestData['norbr-card_number'])
+            ) {
+                $cardNumber = trim($requestData['norbr-card_number']);
+                $cardNumber = substr($cardNumber, -4);
+
                 $details['card'] = [
-                    'scheme' => $getHttpRequest->request['norbr-customer_scheme_name'],
-                    'token' => $getHttpRequest->request['norbr-token'],
+                    'scheme' => $requestData['norbr-customer_scheme_name'],
+                    'token' => $requestData['norbr-token'],
+                    'last4' => $cardNumber,
                 ];
                 $payment->setDetails($details);
 
@@ -93,6 +102,7 @@ class ObtainTokenAction implements ActionInterface, GatewayAwareInterface, ApiAw
             }
 
             if ($customer && isset($requestData['norbr-card'])) {
+                /** @var TokenInterface $token */
                 $token = $tokenRepository->findOneBy([
                     'id' => (int)$requestData['norbr-card'],
                     'customer' => $customer,
@@ -103,8 +113,9 @@ class ObtainTokenAction implements ActionInterface, GatewayAwareInterface, ApiAw
                 }
 
                 $details['card'] = [
-                    'scheme' => 'visa',
+                    'scheme' => $token->getScheme(),
                     'token' => $token->getToken(),
+                    'last4' => $token->getLast4(),
                 ];
                 $payment->setDetails($details);
 

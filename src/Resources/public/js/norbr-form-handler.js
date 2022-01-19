@@ -21,6 +21,11 @@ class NorbrFormHandler {
         if (schemeInput) {
             schemeInput.classList.remove('norbr-class');
         }
+
+        let cardInput = document.getElementById('norbr-card_number');
+        if (cardInput) {
+            cardInput.classList.remove('norbr-class');
+        }
     }
 
     onDomChange(mutation) {

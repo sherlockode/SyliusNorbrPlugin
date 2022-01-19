@@ -7,7 +7,7 @@
                     {% for key, card in available_cards %}
                         <li>
                             <input type="radio" id="norbr-card-{{ key }}" name="norbr-card" value="{{ card.id }}" required />
-                            <label for="norbr-card-{{ key }}">{{ card.scheme }} ({{ card.token }})</label>
+                            <label for="norbr-card-{{ key }}">{{ card.scheme }} - **** **** **** {{ card.last4 }}</label>
                         </li>
                     {% endfor %}
                 </ul>
