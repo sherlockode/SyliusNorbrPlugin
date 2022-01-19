@@ -12,3 +12,5 @@ sylius:
         pay: Payer
         processing: En cours de traitement...
         persist_card_infos: Sauvegarder mes informations de paiement pour mes prochaines commandes
+        use_existing_card: Utiliser une carte enregistrée
+        add_new_card: Ajouter une nouvelle carte

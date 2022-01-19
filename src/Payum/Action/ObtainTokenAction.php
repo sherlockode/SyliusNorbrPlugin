@@ -2,6 +2,7 @@
 
 namespace Sherlockode\SyliusNorbrPlugin\Payum\Action;
 
+use Doctrine\ORM\EntityManagerInterface;
 use Payum\Core\Action\ActionInterface;
 use Payum\Core\ApiAwareInterface;
 use Payum\Core\Exception\LogicException;
@@ -14,8 +15,7 @@ use Payum\Core\Request\GetHttpRequest;
 use Payum\Core\Request\RenderTemplate;
 use Sherlockode\SyliusNorbrPlugin\Payum\Request\ObtainToken;
 use Sylius\Component\Core\Model\PaymentInterface;
-use Sylius\Component\Core\Model\ShopUserInterface;
-use Symfony\Component\Security\Core\Authentication\Token\Storage\TokenStorageInterface;
+use Sylius\Component\Customer\Context\CustomerContextInterface;
 
 /**
  * Class ObtainTokenAction
@@ -26,18 +26,35 @@ class ObtainTokenAction implements ActionInterface, GatewayAwareInterface, ApiAw
     use GatewayAwareTrait;
 
     /**
-     * @var TokenStorageInterface
+     * @var EntityManagerInterface
      */
-    private $tokenStorage;
+    private $em;
+
+    /**
+     * @var CustomerContextInterface
+     */
+    private $customerContext;
+
+    /**
+     * @var string
+     */
+    private $tokenModel;
 
     /**
      * ObtainTokenAction constructor.
      *
-     * @param TokenStorageInterface $tokenStorage
+     * @param EntityManagerInterface   $em
+     * @param CustomerContextInterface $customerContext
+     * @param string                   $tokenModel
      */
-    public function __construct(TokenStorageInterface $tokenStorage)
-    {
-        $this->tokenStorage = $tokenStorage;
+    public function __construct(
+        EntityManagerInterface $em,
+        CustomerContextInterface $customerContext,
+        string $tokenModel
+    ) {
+        $this->em = $em;
+        $this->customerContext = $customerContext;
+        $this->tokenModel = $tokenModel;
     }
 
     /**
@@ -56,26 +73,43 @@ class ObtainTokenAction implements ActionInterface, GatewayAwareInterface, ApiAw
             throw new LogicException('The token has already been set.');
         }
 
+        $customer = $this->customerContext->getCustomer();
+        $tokenRepository = $this->em->getRepository($this->tokenModel);
+
         $getHttpRequest = new GetHttpRequest();
         $this->gateway->execute($getHttpRequest);
 
-        if (
-            $getHttpRequest->method == 'POST' &&
-            isset($getHttpRequest->request['norbr-token']) &&
-            isset($getHttpRequest->request['norbr-customer_scheme_name'])
-        ) {
-            $details['card'] = [
-                'scheme' => $getHttpRequest->request['norbr-customer_scheme_name'],
-                'token' => $getHttpRequest->request['norbr-token'],
-            ];
-            $payment->setDetails($details);
+        if ($getHttpRequest->method == 'POST') {
+            $requestData = $getHttpRequest->request;
 
-            return;
-        }
+            if (isset($requestData['norbr-token']) && isset($requestData['norbr-customer_scheme_name'])) {
+                $details['card'] = [
+                    'scheme' => $getHttpRequest->request['norbr-customer_scheme_name'],
+                    'token' => $getHttpRequest->request['norbr-token'],
+                ];
+                $payment->setDetails($details);
 
-        $user = $this->tokenStorage->getToken() ? $this->tokenStorage->getToken()->getUser() : null;
-        if ($user && $user instanceof ShopUserInterface) {
-            $customer = $user->getCustomer();
+                return;
+            }
+
+            if ($customer && isset($requestData['norbr-card'])) {
+                $token = $tokenRepository->findOneBy([
+                    'id' => (int)$requestData['norbr-card'],
+                    'customer' => $customer,
+                ]);
+
+                if (!$token) {
+                    throw new LogicException('Invalid card selected.');
+                }
+
+                $details['card'] = [
+                    'scheme' => 'visa',
+                    'token' => $token->getToken(),
+                ];
+                $payment->setDetails($details);
+
+                return;
+            }
         }
 
         $renderTemplate = new RenderTemplate('@SherlockodeSyliusNorbrPlugin/Action/obtain_token.html.twig', [
@@ -84,6 +118,7 @@ class ObtainTokenAction implements ActionInterface, GatewayAwareInterface, ApiAw
             'actionUrl' => $request->getToken() ? $request->getToken()->getTargetUrl() : null,
             'order' => $payment->getOrder(),
             'can_persist_card' => isset($customer),
+            'available_cards' => $tokenRepository->findBy(['customer' => $customer]),
         ]);
         $this->gateway->execute($renderTemplate);
 

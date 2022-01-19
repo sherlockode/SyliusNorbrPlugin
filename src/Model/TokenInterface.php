@@ -29,4 +29,16 @@ interface TokenInterface
      * @return $this
      */
     public function setToken(?string $token): self;
+
+    /**
+     * @return string|null
+     */
+    public function getScheme(): ?string;
+
+    /**
+     * @param string|null $scheme
+     *
+     * @return $this
+     */
+    public function setScheme(?string $scheme): self;
 }
