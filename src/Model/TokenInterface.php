@@ -41,4 +41,16 @@ interface TokenInterface
      * @return $this
      */
     public function setScheme(?string $scheme): self;
+
+    /**
+     * @return string|null
+     */
+    public function getLast4(): ?string;
+
+    /**
+     * @param string|null $last4
+     *
+     * @return $this
+     */
+    public function setLast4(?string $last4): self;
 }
