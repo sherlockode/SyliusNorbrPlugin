@@ -11,3 +11,4 @@ sylius:
         firstname_lastname: Firstname Lastname
         pay: Pay
         processing: Processing...
+        persist_card_infos: Save my payment information for future orders

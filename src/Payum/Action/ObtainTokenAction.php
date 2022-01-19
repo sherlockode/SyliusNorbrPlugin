@@ -1,4 +1,5 @@
 <?php
+
 namespace Sherlockode\SyliusNorbrPlugin\Payum\Action;
 
 use Payum\Core\Action\ActionInterface;
@@ -13,6 +14,8 @@ use Payum\Core\Request\GetHttpRequest;
 use Payum\Core\Request\RenderTemplate;
 use Sherlockode\SyliusNorbrPlugin\Payum\Request\ObtainToken;
 use Sylius\Component\Core\Model\PaymentInterface;
+use Sylius\Component\Core\Model\ShopUserInterface;
+use Symfony\Component\Security\Core\Authentication\Token\Storage\TokenStorageInterface;
 
 /**
  * Class ObtainTokenAction
@@ -21,6 +24,21 @@ class ObtainTokenAction implements ActionInterface, GatewayAwareInterface, ApiAw
 {
     use ApiAwareTrait;
     use GatewayAwareTrait;
+
+    /**
+     * @var TokenStorageInterface
+     */
+    private $tokenStorage;
+
+    /**
+     * ObtainTokenAction constructor.
+     *
+     * @param TokenStorageInterface $tokenStorage
+     */
+    public function __construct(TokenStorageInterface $tokenStorage)
+    {
+        $this->tokenStorage = $tokenStorage;
+    }
 
     /**
      * @param Generic $request
@@ -55,11 +73,17 @@ class ObtainTokenAction implements ActionInterface, GatewayAwareInterface, ApiAw
             return;
         }
 
+        $user = $this->tokenStorage->getToken() ? $this->tokenStorage->getToken()->getUser() : null;
+        if ($user && $user instanceof ShopUserInterface) {
+            $customer = $user->getCustomer();
+        }
+
         $renderTemplate = new RenderTemplate('@SherlockodeSyliusNorbrPlugin/Action/obtain_token.html.twig', [
             'publishable_key' => $this->api->getApiKey(),
             'is_production' => $this->api->isProduction(),
             'actionUrl' => $request->getToken() ? $request->getToken()->getTargetUrl() : null,
             'order' => $payment->getOrder(),
+            'can_persist_card' => isset($customer),
         ]);
         $this->gateway->execute($renderTemplate);
 

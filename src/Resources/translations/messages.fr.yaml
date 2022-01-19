@@ -11,3 +11,4 @@ sylius:
         firstname_lastname: Prénom Nom
         pay: Payer
         processing: En cours de traitement...
+        persist_card_infos: Sauvegarder mes informations de paiement pour mes prochaines commandes
