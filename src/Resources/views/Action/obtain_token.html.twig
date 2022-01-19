@@ -1,55 +1,8 @@
 {% extends layout ?: "@PayumCore/layout.html.twig" %}
 
 {% block payum_body %}
-    <form action="{{ actionUrl|default('') }}" id="norbr-payment-form" method="post" novalidate="novalidate" class="needs-validation">
-        <div class="row">
-            <div class="col-12">
-                <div id="norbr-payment-error"></div>
-            </div>
-        </div>
-        <div class="row">
-            <div class="col-10">
-                <div class="form-group">
-                    <label for="norbr-payment-card" class="control-label mb-1">{{ 'sylius.norbr.card_number'|trans }}</label>
-                    <div class="form-group" id="norbr-payment-card" data-class="red form-control cc-number identified visa" data-placeholder="4111 xxxx xxxx xxxx"></div>
-                </div>
-            </div>
-            <div class="col-2">
-                <div id="norbr-payment-logo"></div>
-            </div>
-        </div>
-        <div class="row">
-            <div class="col-6">
-                <div class="form-group">
-                    <label for="norbr-payment-expiry" class="control-label mb-1">{{ 'sylius.norbr.expiration_date'|trans }}</label>
-                    <div class="form-group" id="norbr-payment-expiry" data-class="form-control cc-exp" data-placeholder="MM/YY"></div>
-                </div>
-            </div>
-            <div class="col-6">
-                <label for="norbr-payment-cvv" class="control-label mb-1">{{ 'sylius.norbr.cvv'|trans }}</label>
-                <div class="input-group">
-                    <div class="form-group" id="norbr-payment-cvv" data-class="form-control cc-cc-cvc" data-placeholder="123"></div>
-                </div>
-            </div>
-        </div>
-        <div class="form-group">
-            <label for="norbr-payment-holder" class="control-label mb-1">{{ 'sylius.norbr.card_holder'|trans }}</label>
-            <div class="form-group" id="norbr-payment-holder" data-class="form-control cc-number identified visa" data-placeholder="{{ 'sylius.norbr.firstname_lastname'|trans }}"></div>
-        </div>
-        {% if can_persist_card %}
-        <div class="form-group form-check">
-            <input type="checkbox" class="form-check-input" name="norbr-persist-card" id="norbr-persist-card-infos">
-            <label class="form-check-label" for="norbr-persist-card-infos">{{ 'sylius.norbr.persist_card_infos'|trans }}</label>
-        </div>
-        {% endif %}
-        <div>
-            <button id="payment-button" type="submit" class="btn btn-lg btn-info btn-block">
-                <i class="fa fa-lock fa-lg"></i>&nbsp;
-                <span id="payment-button-amount">{{ 'sylius.norbr.pay'|trans }}</span>
-                <span id="payment-button-sending" style="display:none;">{{ 'sylius.norbr.processing'|trans }}</span>
-            </button>
-        </div>
-    </form>
+    {% include '@SherlockodeSyliusNorbrPlugin/_available_cards.html.twig' %}
+    {% include '@SherlockodeSyliusNorbrPlugin/_payment_form.html.twig' %}
 {% endblock %}
 
 {% block payum_javascripts %}

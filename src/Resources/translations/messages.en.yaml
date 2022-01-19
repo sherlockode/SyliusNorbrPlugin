@@ -12,3 +12,5 @@ sylius:
         pay: Pay
         processing: Processing...
         persist_card_infos: Save my payment information for future orders
+        use_existing_card: Use existing card
+        add_new_card: Add new card

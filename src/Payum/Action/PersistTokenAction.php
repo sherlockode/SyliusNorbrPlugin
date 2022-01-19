@@ -9,9 +9,9 @@ use Payum\Core\Exception\RequestNotSupportedException;
 use Payum\Core\Request\Generic;
 use Sherlockode\SyliusNorbrPlugin\Model\TokenInterface;
 use Sherlockode\SyliusNorbrPlugin\Payum\Request\PersistToken;
+use Sylius\Component\Core\Model\CustomerInterface;
 use Sylius\Component\Core\Model\PaymentInterface;
-use Sylius\Component\Core\Model\ShopUserInterface;
-use Symfony\Component\Security\Core\Authentication\Token\Storage\TokenStorageInterface;
+use Sylius\Component\Customer\Context\CustomerContextInterface;
 
 /**
  * Class PersistTokenAction
@@ -24,9 +24,9 @@ class PersistTokenAction implements ActionInterface
     private $em;
 
     /**
-     * @var TokenStorageInterface
+     * @var CustomerContextInterface
      */
-    private $tokenStorage;
+    private $customerContext;
 
     /**
      * @var string
@@ -36,14 +36,14 @@ class PersistTokenAction implements ActionInterface
     /**
      * PersistTokenAction constructor.
      *
-     * @param EntityManagerInterface $em
-     * @param TokenStorageInterface  $tokenStorage
-     * @param string                 $tokenModel
+     * @param EntityManagerInterface   $em
+     * @param CustomerContextInterface $customerContext
+     * @param string                   $tokenModel
      */
-    public function __construct(EntityManagerInterface $em, TokenStorageInterface $tokenStorage, string $tokenModel)
+    public function __construct(EntityManagerInterface $em, CustomerContextInterface $customerContext, string $tokenModel)
     {
         $this->em = $em;
-        $this->tokenStorage = $tokenStorage;
+        $this->customerContext = $customerContext;
         $this->tokenModel = $tokenModel;
     }
 
@@ -66,16 +66,19 @@ class PersistTokenAction implements ActionInterface
             throw new LogicException('The token is empty.');
         }
 
-        $user = $this->tokenStorage->getToken() ? $this->tokenStorage->getToken()->getUser() : null;
-        if ($user && $user instanceof ShopUserInterface) {
-            $customer = $user->getCustomer();
+        if (empty($details['card']['scheme'])) {
+            throw new LogicException('The card scheme is empty.');
         }
 
-        if (isset($customer)) {
+        /** @var CustomerInterface $customer */
+        $customer = $this->customerContext->getCustomer();
+
+        if ($customer) {
             /** @var TokenInterface $token */
             $token = new $this->tokenModel;
             $token->setCustomer($customer);
             $token->setToken($details['card']['token']);
+            $token->setScheme($details['card']['scheme']);
             $this->em->persist($token);
         }
     }

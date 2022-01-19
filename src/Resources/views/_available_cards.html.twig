@@ -1,0 +1,23 @@
+{% if available_cards is defined and available_cards is iterable and available_cards|length > 0 %}
+    <h2>{{ 'sylius.norbr.use_existing_card'|trans }}</h2>
+    <form action="{{ actionUrl|default('') }}" method="post">
+        <div class="row">
+            <div class="col-12">
+                <ul>
+                    {% for key, card in available_cards %}
+                        <li>
+                            <input type="radio" id="norbr-card-{{ key }}" name="norbr-card" value="{{ card.id }}" required />
+                            <label for="norbr-card-{{ key }}">{{ card.scheme }} ({{ card.token }})</label>
+                        </li>
+                    {% endfor %}
+                </ul>
+            </div>
+        </div>
+        <div>
+            <button id="payment-button" type="submit" class="btn btn-lg btn-info btn-block">
+                <i class="fa fa-lock fa-lg"></i>&nbsp;
+                <span id="payment-button-amount">{{ 'sylius.norbr.pay'|trans }}</span>
+            </button>
+        </div>
+    </form>
+{% endif %}

@@ -30,7 +30,9 @@
         </service>
 
         <service id="Sherlockode\SyliusNorbrPlugin\Payum\Action\ObtainTokenAction" public="true">
-            <argument type="service" id="security.token_storage"/>
+            <argument type="service" id="doctrine.orm.entity_manager"/>
+            <argument type="service" id="sylius.context.customer"/>
+            <argument>%sherlockode_sylius_norbr.model.token%</argument>
             <tag name="payum.action" factory="sylius.norbr" alias="payum.action.obtain_token" />
         </service>
 
@@ -41,7 +43,7 @@
 
         <service id="Sherlockode\SyliusNorbrPlugin\Payum\Action\PersistTokenAction" public="true">
             <argument type="service" id="doctrine.orm.entity_manager"/>
-            <argument type="service" id="security.token_storage"/>
+            <argument type="service" id="sylius.context.customer"/>
             <argument>%sherlockode_sylius_norbr.model.token%</argument>
             <tag name="payum.action" factory="sylius.norbr" alias="payum.action.persist_token" />
         </service>
