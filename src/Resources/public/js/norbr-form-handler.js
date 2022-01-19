@@ -4,6 +4,7 @@ class NorbrFormHandler {
         this.form = document.getElementById(formId);
 
         this.enableListeners();
+        this.setTokenType();
     }
 
     enableListeners() {
@@ -45,6 +46,30 @@ class NorbrFormHandler {
 
                 this.form.submit();
             }
+        }
+    }
+
+    setTokenType() {
+        // Define the token type to "recurring", to use it for later orders, or to "one-shot" for a single use
+        let allowRecurringPayment = this.form.querySelector('#norbr-persist-card-infos'),
+            input = this.form.querySelector('#norbr-token_type');
+
+        if (!allowRecurringPayment) {
+            return;
+        }
+
+        allowRecurringPayment.addEventListener('change', function () {
+            if (this.checked) {
+                input.value = 'recurring';
+            } else {
+                input.value = 'oneshot';
+            }
+        });
+
+        if (allowRecurringPayment.checked) {
+            input.value = 'recurring';
+        } else {
+            input.value = 'oneshot';
         }
     }
 }

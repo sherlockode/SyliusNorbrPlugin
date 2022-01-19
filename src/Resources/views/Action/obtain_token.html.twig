@@ -36,6 +36,12 @@
             <label for="norbr-payment-holder" class="control-label mb-1">{{ 'sylius.norbr.card_holder'|trans }}</label>
             <div class="form-group" id="norbr-payment-holder" data-class="form-control cc-number identified visa" data-placeholder="{{ 'sylius.norbr.firstname_lastname'|trans }}"></div>
         </div>
+        {% if can_persist_card %}
+        <div class="form-group form-check">
+            <input type="checkbox" class="form-check-input" name="norbr-persist-card" id="norbr-persist-card-infos">
+            <label class="form-check-label" for="norbr-persist-card-infos">{{ 'sylius.norbr.persist_card_infos'|trans }}</label>
+        </div>
+        {% endif %}
         <div>
             <button id="payment-button" type="submit" class="btn btn-lg btn-info btn-block">
                 <i class="fa fa-lock fa-lg"></i>&nbsp;

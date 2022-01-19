@@ -7,9 +7,10 @@ use Payum\Core\Exception\RequestNotSupportedException;
 use Payum\Core\GatewayAwareInterface;
 use Payum\Core\GatewayAwareTrait;
 use Payum\Core\Request\Generic;
-use Sherlockode\SyliusNorbrPlugin\Norbr\ApiCode;
+use Payum\Core\Request\GetHttpRequest;
 use Sherlockode\SyliusNorbrPlugin\Payum\Request\CreateCharge;
 use Sherlockode\SyliusNorbrPlugin\Payum\Request\ObtainToken;
+use Sherlockode\SyliusNorbrPlugin\Payum\Request\PersistToken;
 use Sylius\Component\Core\Model\PaymentInterface;
 use Payum\Core\Request\Capture;
 
@@ -40,6 +41,16 @@ class CaptureAction implements ActionInterface, GatewayAwareInterface
             $obtainToken->setModel($payment);
 
             $this->gateway->execute($obtainToken);
+        }
+
+        $getHttpRequest = new GetHttpRequest();
+        $this->gateway->execute($getHttpRequest);
+
+        if ('POST' === $getHttpRequest->method && isset($getHttpRequest->request['norbr-persist-card'])) {
+            $persistToken = new PersistToken($request->getToken());
+            $persistToken->setModel($payment);
+
+            $this->gateway->execute($persistToken);
         }
 
         $this->gateway->execute(new CreateCharge($request->getToken()));
