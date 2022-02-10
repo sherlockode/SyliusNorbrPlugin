@@ -48,6 +48,11 @@
             <tag name="payum.action" factory="sylius.norbr" alias="payum.action.persist_token" />
         </service>
 
+        <service id="Sherlockode\SyliusNorbrPlugin\Payum\Action\ConfirmAction" public="true">
+            <argument type="service" id="Sherlockode\SyliusNorbrPlugin\Norbr\ClientFactory" />
+            <tag name="payum.action" factory="sylius.norbr" alias="payum.action.confirm" />
+        </service>
+
         <service id="Sherlockode\SyliusNorbrPlugin\Payum\Action\StatusAction" public="true">
             <tag name="payum.action" factory="sylius.norbr" alias="payum.action.status" />
         </service>

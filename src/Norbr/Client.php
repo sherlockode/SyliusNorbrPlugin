@@ -4,6 +4,7 @@ namespace Sherlockode\SyliusNorbrPlugin\Norbr;
 
 use GuzzleHttp\Client as GuzzleClient;
 use GuzzleHttp\Exception\GuzzleException;
+use Psr\Http\Message\ResponseInterface;
 use Sherlockode\SyliusNorbrPlugin\Payum\NorbrApi;
 use Sylius\Component\Core\Model\PaymentInterface;
 use Sylius\Component\Resource\Exception\UpdateHandlingException;
@@ -101,17 +102,29 @@ class Client
                         'pending_url' => $successUrl,
                         'exception_url' => $declineUrl,
                     ],
-                    'headers' => [
-                        'x-api-key' => $this->api->getApiKey(),
-                        'version' => '1.0.0',
-                    ],
                 ],
             );
         } catch (GuzzleException $exception) {
             $response = $exception->getResponse();
         }
 
-        return json_decode($response->getBody()->getContents(), true);
+        return $this->decodeResponse($response);
+    }
+
+    /**
+     * @param string $orderId
+     *
+     * @return array
+     */
+    public function getOrder(string $orderId): array
+    {
+        try {
+            $response = $this->getClient()->request('GET', sprintf('/payment/order/%s', $orderId));
+        } catch (GuzzleException $exception) {
+            $response = $exception->getResponse();
+        }
+
+        return $this->decodeResponse($response);
     }
 
     /**
@@ -135,17 +148,13 @@ class Client
                         'amount' => $amount,
                         'refund_reason' => 'requested_by_customer',
                     ],
-                    'headers' => [
-                        'x-api-key' => $this->api->getApiKey(),
-                        'version' => '1.0.0',
-                    ],
                 ],
             );
         } catch (GuzzleException $exception) {
             throw new UpdateHandlingException('Could not refund Norbr order');
         }
 
-        return json_decode($response->getBody()->getContents(), true);
+        return $this->decodeResponse($response);
     }
 
     /**
@@ -157,6 +166,10 @@ class Client
             $this->client = new GuzzleClient([
                 'base_uri' => $this->getBaseUri(),
                 'timeout' => 30,
+                'headers' => [
+                    'x-api-key' => $this->api->getApiKey(),
+                    'version' => '1.0.0',
+                ],
             ]);
         }
 
@@ -173,5 +186,15 @@ class Client
         }
 
         return self::API_URL_SANDBOX;
+    }
+
+    /**
+     * @param ResponseInterface $response
+     *
+     * @return array
+     */
+    private function decodeResponse(ResponseInterface $response): array
+    {
+        return json_decode($response->getBody()->getContents(), true);
     }
 }

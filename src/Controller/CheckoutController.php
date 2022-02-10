@@ -4,6 +4,7 @@ namespace Sherlockode\SyliusNorbrPlugin\Controller;
 
 use Payum\Core\Payum;
 use Sherlockode\SyliusNorbrPlugin\Norbr\ApiCode;
+use Sherlockode\SyliusNorbrPlugin\Payum\Request\Confirm;
 use Sylius\Component\Core\Model\PaymentInterface;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Request;
@@ -41,10 +42,9 @@ class CheckoutController
         $identity = $token->getDetails();
         /** @var PaymentInterface $payment */
         $payment = $this->payum->getStorage($identity->getClass())->find($identity);
-        $details = $payment->getDetails();
 
-        $details['state'] = ApiCode::TRANSACTION_SUCCESSFUL;
-        $payment->setDetails($details);
+        $gateway = $this->payum->getGateway('norbr');
+        $gateway->execute(new Confirm($payment));
 
         $this->payum->getHttpRequestVerifier()->invalidate($token);
         $afterPayToken = $this->payum->getTokenFactory()->createToken(
